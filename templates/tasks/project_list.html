@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Projets - ESMT Task{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-2">
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3 animate-fade-in">
+        <div>
+            <h2 class="fw-bold mb-1">Mes Projets</h2>
+            <p class="text-muted mb-0">Centralisez et gérez l'ensemble de vos environnements collaboratifs.</p>
+        </div>
+        <a href="{% url 'project_create' %}" class="btn btn-primary rounded-3 px-4 shadow-sm py-2">
+            <i class="fas fa-plus-circle me-2 text-white"></i>Démarrer un Projet
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-xl-4 col-md-6 animate-fade-in" style="animation-delay: {{ forloop.counter0|add:0.1 }}s;">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                <div class="p-4 border-bottom bg-white d-flex justify-content-between align-items-start">
+                    <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4 shadow-xs">
+                        <i class="fas fa-folder fa-lg"></i>
+                    </div>
+                    {% if project.is_creator %}
+                    <span
+                        class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 small fw-bold">Propriétaire</span>
+                    {% else %}
+                    <span
+                        class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 py-2 small fw-bold">Membre</span>
+                    {% endif %}
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3"><a href="{% url 'project_detail' project.pk %}"
+                            class="text-dark text-decoration-none hover-primary">{{ project.name }}</a></h4>
+                    <p class="text-muted small mb-4 leading-relaxed line-clamp-2"
+                        style="height: 3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        {{ project.description|default:"Aucune description disponible." }}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div class="d-flex flex-column">
+                            <span class="x-small text-muted text-uppercase tracking-wider mb-2"
+                                style="font-size: 0.65rem;">Membres</span>
+                            <div class="avatar-group d-flex">
+                                {% for member in project.members.all|slice:":4" %}
+                                <div class="avatar-xs rounded-circle bg-white shadow-xs d-flex align-items-center justify-content-center border"
+                                    style="width: 32px; height: 32px; margin-left: -10px;"
+                                    title="{{ member.username }}">
+                                    <span style="font-size: 0.75rem; font-weight: bold;">{{
+                                        member.username|slice:":1"|upper }}</span>
+                                </div>
+                                {% endfor %}
+                                {% if project.members.count > 4 %}
+                                <div class="avatar-xs rounded-circle bg-light d-flex align-items-center justify-content-center border x-small"
+                                    style="width: 32px; height: 32px; margin-left: -10px;">
+                                    +{{ project.members.count|add:"-4" }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="x-small text-muted text-uppercase tracking-wider mb-2 d-block"
+                                style="font-size: 0.65rem;">Tâches</span>
+                            <span class="h5 fw-bold text-primary">{{ project.tasks.count }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            <i class="far fa-calendar-alt me-1"></i> {{ project.created_at|date:"d M Y" }}
+                        </div>
+                        <a href="{% url 'project_detail' project.pk %}"
+                            class="btn btn-light btn-sm rounded-pill px-3 shadow-xs border">Accéder <i
+                                class="fas fa-arrow-right ms-2 scale-hover"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 py-5 text-center animate-fade-in">
+            <div class="opacity-10 mb-5">
+                <i class="fas fa-project-diagram fa-10x"></i>
+            </div>
+            <h3 class="fw-bold text-muted">Prêt à collaborer ?</h3>
+            <p class="text-muted mb-4">Vous n'avez pas encore de projet actif. Créez-en un ou demandez à être invité.
+            </p>
+            <a href="{% url 'project_create' %}" class="btn btn-primary rounded-3 px-5 py-3 shadow-lg">
+                <i class="fas fa-plus me-2 text-white"></i>Créer mon premier projet
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hover-primary:hover {
+        color: var(--primary) !important;
+    }
+
+    .scale-hover {
+        transition: transform 0.2s;
+    }
+
+    .btn:hover .scale-hover {
+        transform: translateX(3px);
+    }
+</style>
+{% endblock %}

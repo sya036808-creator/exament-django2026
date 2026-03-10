@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Inscription" %} - ESMT Task{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg p-4">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-primary">Créer un compte</h3>
+                    <p class="text-muted small">Rejoignez l'espace collaboratif ESMT</p>
+                </div>
+
+                <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.first_name.id_for_label }}"
+                                class="form-label small fw-bold">Prénom</label>
+                            <input type="text" name="first_name" class="form-control" placeholder="Jean"
+                                id="{{ form.first_name.id_for_label }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label small fw-bold">Nom</label>
+                            <input type="text" name="last_name" class="form-control" placeholder="Dupont"
+                                id="{{ form.last_name.id_for_label }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label small fw-bold">Email ESMT</label>
+                        <input type="email" name="email" placeholder="prenom.nom@esmt.sn" class="form-control"
+                            id="{{ form.email.id_for_label }}" required>
+                        {% if form.email.errors %}
+                        <div class="text-danger small">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_role" class="form-label small fw-bold">Vous êtes ?</label>
+                        <select name="role" id="id_role" class="form-select">
+                            <option value="STUDENT">Étudiant</option>
+                            <option value="PROFESSOR">Professeur</option>
+                        </select>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label small fw-bold">Mot de
+                                passe</label>
+                            <input type="password" name="password1" placeholder="********" class="form-control"
+                                id="{{ form.password1.id_for_label }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.password2.id_for_label }}"
+                                class="form-label small fw-bold">Confirmation</label>
+                            <input type="password" name="password2" placeholder="********" class="form-control"
+                                id="{{ form.password2.id_for_label }}" required>
+                        </div>
+                        {% if form.password1.errors %}
+                        <div class="col-12 mt-1">
+                            <div class="text-danger small">{{ form.password1.errors }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                    <button class="btn btn-primary w-100 py-2 fw-bold" type="submit">S'inscrire</button>
+
+                    <div class="text-center mt-4">
+                        <p class="small text-muted">Déjà un compte ? <a href="{% url 'account_login' %}"
+                                class="fw-bold text-decoration-none text-primary">Se connecter</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de Bord - ESMT Task{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Bienvenue, {{ user.first_name|default:user.username }} !</h2>
+            <p>Voici un aperçu de vos projets et tâches.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-light border-0">
+                <div class="card-body py-3">
+                    <form method="get" class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <strong class="text-muted small"><i class="fas fa-filter me-2"></i>Filtrer les tâches
+                                :</strong>
+                        </div>
+                        <div class="col-auto">
+                            <select name="status" class="form-select form-select-sm border-0 shadow-sm"
+                                title="Filtrer par statut">
+                                {% for choice in status_choices %}
+                                <option value="{{ choice.value }}" {% if choice.selected %}selected{% endif %}>{{
+                                    choice.label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <select name="user" class="form-select form-select-sm border-0 shadow-sm"
+                                title="Filtrer par utilisateur assigné">
+                                <option value="">Tous les membres</option>
+                                {% for member in team_members %}
+                                <option value="{{ member.id }}" {% if member.is_selected %}selected{% endif %}>{{
+                                    member.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-sm btn-primary shadow-sm px-3">Filtrer</button>
+                            <a href="{% url 'dashboard' %}"
+                                class="btn btn-sm btn-light shadow-sm text-muted">Réinitialiser</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-white fw-bold">Total Tâches</div>
+                <div class="card-body">
+                    <h3 class="card-title text-center text-primary">{{ total_tasks }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">À Faire</div>
+                <div class="card-body">
+                    <h3 class="card-title text-center">{{ todo_tasks }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">En Cours</div>
+                <div class="card-body">
+                    <h3 class="card-title text-center">{{ in_progress_tasks }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Terminées</div>
+                <div class="card-body">
+                    <h3 class="card-title text-center">{{ done_tasks }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Mes Projets</span>
+                    <a href="{% url 'project_list' %}" class="btn btn-sm btn-outline-primary">Voir tous</a>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nom du Projet</th>
+                                <th>Créateur</th>
+                                <th>Membres</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in projects %}
+                            <tr>
+                                <td>{{ project.name }}</td>
+                                <td>{{ project.creator.username }}</td>
+                                <td>{{ project.members.count }} membre(s)</td>
+                                <td>
+                                    <a href="{% url 'project_detail' project.pk %}"
+                                        class="btn btn-sm btn-primary">Ouvrir</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">Aucun projet trouvé.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Tâches Récentes
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for task in recent_tasks %}
+                    <li class="list-group-item">
+                        <strong><a href="{% url 'task_update' task.pk %}">{{ task.title }}</a></strong>
+                        <br>
+                        <small class="text-muted">Projet: {{ task.project.name }}</small><br>
+                        <small>Statut: {{ task.get_status_display }}</small><br>
+                        <small class="text-danger">Pour le: {{ task.deadline|date:"d M Y" }}</small>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center">Aucune tâche récente.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
