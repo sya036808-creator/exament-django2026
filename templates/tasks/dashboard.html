@@ -1,148 +1,196 @@
 {% extends 'base.html' %}
 
-{% block title %}Tableau de Bord - ESMT Task{% endblock %}
+{% block title %}Dashboard - ESMT Task Manager{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2>Bienvenue, {{ user.first_name|default:user.username }} !</h2>
-            <p>Voici un aperçu de vos projets et tâches.</p>
+<div class="welcome-section">
+    <h1>Welcome back, <span>{{ user.first_name|default:user.username }}</span>!</h1>
+    <p class="date-text">{% now "l d F Y" %}</p>
+</div>
+
+<div class="stats-bar">
+    <span class="label">Tâches :</span>
+    <div class="stat-item active"><span class="count">{{ total_tasks }}</span> Actives</div>
+    <div class="divider"></div>
+    <div class="stat-item due"><span class="count">{{ todo_tasks }}</span> À Faire</div>
+    <div class="divider"></div>
+    <div class="stat-item priority"><span class="count">{{ in_progress_tasks }}</span> En Cours</div>
+    <div class="divider"></div>
+    <div class="stat-item bonus"><span class="count">{{ done_tasks }}</span> Terminées</div>
+
+    <div class="ms-auto">
+        <form method="get" class="d-flex align-items-center gap-2">
+            <select name="status" class="form-select form-select-sm" style="width: auto; font-size: 0.75rem;"
+                title="Filtrer par statut">
+                {% for choice in status_choices %}
+                <option value="{{ choice.value }}" {% if choice.selected %}selected{% endif %}>{{ choice.label }}
+                </option>
+                {% endfor %}
+            </select>
+            <select name="user" class="form-select form-select-sm" style="width: auto; font-size: 0.75rem;"
+                title="Filtrer par membre">
+                <option value="">Tous les membres</option>
+                {% for member in team_members %}
+                <option value="{{ member.id }}" {% if member.is_selected %}selected{% endif %}>{{ member.username }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-sm"
+                style="color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 10px; font-size: 0.75rem;">Reset</a>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="section-header">
+            <span class="section-title">Projets Actifs</span>
+            <a href="{% url 'project_list' %}" class="section-link">Voir tous <i class="fas fa-arrow-right ms-1"
+                    style="font-size:0.65rem;"></i></a>
         </div>
+
+        <div class="row g-3 mb-4">
+            {% for project in projects|slice:":3" %}
+            <div class="col-md-4">
+                <a href="{% url 'project_detail' project.pk %}" class="project-card">
+                    <div class="project-num">{{ forloop.counter }}. Projet</div>
+                    <div class="project-name">{{ project.name }}</div>
+                    <div class="project-due">Créé le : <span>{{ project.created_at|date:"d M Y" }}</span></div>
+                    <div class="progress-label">
+                        <span class="prog-name">Progression</span>
+                        <span class="prog-pct">{{ project.tasks.count }} tâches</span>
+                    </div>
+                    <div class="progress mb-3">
+                        {% with total=project.tasks.count done=project.tasks.all %}
+                        <div class="progress-bar"
+                            style="width: {% if project.tasks.count > 0 %}{{ project.tasks.filter.count }}{% else %}0{% endif %}%">
+                        </div>
+                        {% endwith %}
+                    </div>
+                    <div class="team-avatars">
+                        {% for member in project.members.all|slice:":4" %}
+                        <div class="avatar" title="{{ member.username }}">{{ member.username|slice:":1"|upper }}</div>
+                        {% endfor %}
+                        {% if project.members.count > 4 %}
+                        <div class="avatar" style="background: var(--gold-400); color: var(--navy-900);">+{{
+                            project.members.count|add:"-4" }}</div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="task-row justify-content-center" style="padding: 30px;">
+                    <div class="text-center" style="color: var(--text-muted);">
+                        <i class="fas fa-layer-group fa-2x mb-3" style="opacity:0.3;"></i>
+                        <p class="mb-2">Aucun projet actif</p>
+                        <a href="{% url 'project_list' %}" class="btn btn-primary btn-sm">Créer un projet</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-header mt-2">
+            <span class="section-title">Tâches à Venir</span>
+        </div>
+
+        {% for task in recent_tasks %}
+        <div class="task-row">
+            <div class="task-info">
+                <div class="task-title">{{ task.title }}</div>
+                <div class="task-project">{{ task.project.name }}</div>
+            </div>
+            <div class="task-due">
+                <span>Échéance</span>
+                {{ task.deadline|date:"d M Y" }}
+            </div>
+            {% if task.status == 'TODO' %}
+            <span class="badge-priority badge-high">High</span>
+            {% elif task.status == 'IN_PROGRESS' %}
+            <span class="badge-priority badge-med">En cours</span>
+            {% else %}
+            <span class="badge-priority badge-low">Terminé</span>
+            {% endif %}
+            <span
+                class="badge-status-{% if task.status == 'TODO' %}todo{% elif task.status == 'IN_PROGRESS' %}progress{% else %}done{% endif %}">{{
+                task.get_status_display }}</span>
+        </div>
+        {% empty %}
+        <div class="task-row justify-content-center">
+            <span style="color: var(--text-muted); font-size: 0.8rem;"><i class="fas fa-check-circle me-2"
+                    style="color: #27ae60;"></i>Aucune tâche en attente</span>
+        </div>
+        {% endfor %}
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card bg-light border-0">
-                <div class="card-body py-3">
-                    <form method="get" class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <strong class="text-muted small"><i class="fas fa-filter me-2"></i>Filtrer les tâches
-                                :</strong>
-                        </div>
-                        <div class="col-auto">
-                            <select name="status" class="form-select form-select-sm border-0 shadow-sm"
-                                title="Filtrer par statut">
-                                {% for choice in status_choices %}
-                                <option value="{{ choice.value }}" {% if choice.selected %}selected{% endif %}>{{
-                                    choice.label }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <select name="user" class="form-select form-select-sm border-0 shadow-sm"
-                                title="Filtrer par utilisateur assigné">
-                                <option value="">Tous les membres</option>
-                                {% for member in team_members %}
-                                <option value="{{ member.id }}" {% if member.is_selected %}selected{% endif %}>{{
-                                    member.username }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-sm btn-primary shadow-sm px-3">Filtrer</button>
-                            <a href="{% url 'dashboard' %}"
-                                class="btn btn-sm btn-light shadow-sm text-muted">Réinitialiser</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="col-lg-4">
+        <div class="section-header">
+            <span class="section-title">Évaluation & Primes</span>
+            <a href="{% url 'statistics' %}" class="section-link">Détails</a>
         </div>
-    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm mb-3">
-                <div class="card-header bg-white fw-bold">Total Tâches</div>
-                <div class="card-body">
-                    <h3 class="card-title text-center text-primary">{{ total_tasks }}</h3>
+        <div class="bonus-card mb-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="bonus-label">Points de Performance</div>
+                    <div class="bonus-big">{{ done_tasks }}</div>
+                </div>
+                <div>
+                    <div class="bonus-label">Seuil Prime</div>
+                    <div class="bonus-big" style="color: var(--text-muted); font-size: 1.3rem;">90%</div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-header">À Faire</div>
-                <div class="card-body">
-                    <h3 class="card-title text-center">{{ todo_tasks }}</h3>
-                </div>
+            <div class="progress mt-2">
+                {% if total_tasks > 0 %}
+                <div class="progress-bar" style="width: {% widthratio done_tasks total_tasks 100 %}%"></div>
+                {% else %}
+                <div class="progress-bar" style="width: 0%"></div>
+                {% endif %}
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-header">En Cours</div>
-                <div class="card-body">
-                    <h3 class="card-title text-center">{{ in_progress_tasks }}</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-header">Terminées</div>
-                <div class="card-body">
-                    <h3 class="card-title text-center">{{ done_tasks }}</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Mes Projets</span>
-                    <a href="{% url 'project_list' %}" class="btn btn-sm btn-outline-primary">Voir tous</a>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Nom du Projet</th>
-                                <th>Créateur</th>
-                                <th>Membres</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for project in projects %}
-                            <tr>
-                                <td>{{ project.name }}</td>
-                                <td>{{ project.creator.username }}</td>
-                                <td>{{ project.members.count }} membre(s)</td>
-                                <td>
-                                    <a href="{% url 'project_detail' project.pk %}"
-                                        class="btn btn-sm btn-primary">Ouvrir</a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center">Aucun projet trouvé.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="d-flex justify-content-between mt-1" style="font-size: 0.68rem; color: var(--text-muted);">
+                <span>Tâches terminées</span>
+                {% if total_tasks > 0 %}<span>{% widthratio done_tasks total_tasks 100 %}%</span>{% else
+                %}<span>0%</span>{% endif %}
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    Tâches Récentes
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% for task in recent_tasks %}
-                    <li class="list-group-item">
-                        <strong><a href="{% url 'task_update' task.pk %}">{{ task.title }}</a></strong>
-                        <br>
-                        <small class="text-muted">Projet: {{ task.project.name }}</small><br>
-                        <small>Statut: {{ task.get_status_display }}</small><br>
-                        <small class="text-danger">Pour le: {{ task.deadline|date:"d M Y" }}</small>
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item text-center">Aucune tâche récente.</li>
-                    {% endfor %}
-                </ul>
+        <div class="mini-bonus-grid">
+            <div class="mini-bonus">
+                <span class="mini-title">Prime 30K
+                    <span class="pct-badge pct-gold">90%</span>
+                </span>
+                <span class="mini-sub">Taux de réussite</span>
+                <span class="mini-pts">30.000 CFA</span>
             </div>
+            <div class="mini-bonus">
+                <span class="mini-title">Prime 100K
+                    <span class="pct-badge pct-green">100%</span>
+                </span>
+                <span class="mini-sub">Taux parfait</span>
+                <span class="mini-pts">100.000 CFA</span>
+            </div>
+            <div class="mini-bonus">
+                <span class="mini-title">À Faire</span>
+                <span class="mini-sub">Tâches non commencées</span>
+                <span class="mini-pts">{{ todo_tasks }} tâches</span>
+            </div>
+            <div class="mini-bonus">
+                <span class="mini-title">En Cours
+                    <span class="pct-badge pct-blue">→</span>
+                </span>
+                <span class="mini-sub">Tâches actives</span>
+                <span class="mini-pts">{{ in_progress_tasks }} tâches</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+            <a href="{% url 'project_list' %}" class="btn btn-primary w-100 mb-2" style="font-size: 0.8rem;"><i
+                    class="fas fa-plus me-2"></i>Nouveau Projet</a>
+            <a href="{% url 'statistics' %}" class="btn btn-outline-primary w-100" style="font-size: 0.8rem;"><i
+                    class="fas fa-chart-bar me-2"></i>Voir Statistiques</a>
         </div>
     </div>
 </div>

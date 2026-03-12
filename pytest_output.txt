@@ -1,0 +1,24 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\ALPHA SY\Desktop\BUREAU 2\EXAMEN DJANGO\venv\Scripts\python.exe
+cachedir: .pytest_cache
+django: version: 6.0.2, settings: esmt_task_manager.settings (from ini)
+rootdir: C:\Users\ALPHA SY\Desktop\BUREAU 2\EXAMEN DJANGO
+configfile: pytest.ini
+plugins: django-4.12.0
+collecting ... collected 3 items / 1 error
+
+=================================== ERRORS ====================================
+_______________________ ERROR collecting tasks/tests.py _______________________
+ImportError while importing test module 'C:\Users\ALPHA SY\Desktop\BUREAU 2\EXAMEN DJANGO\tasks\tests.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tasks\tests.py:5: in <module>
+    from tasks.models import Project, Task, Comment
+E   ImportError: cannot import name 'Comment' from 'tasks.models' (C:\Users\ALPHA SY\Desktop\BUREAU 2\EXAMEN DJANGO\tasks\models.py)
+=========================== short test summary info ===========================
+ERROR tasks/tests.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.68s ===============================

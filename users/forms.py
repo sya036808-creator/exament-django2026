@@ -4,10 +4,11 @@ from .models import CustomUser
 
 # Formulaire personnalisé pour l'inscription (surcharge celui de allauth)
 class CustomSignupForm(SignupForm):
-    # Ajout des champs Prénom, Nom et Rôle qui ne sont pas par défaut dans allauth
+    # Ajout des champs Prénom, Nom, Rôle et Téléphone qui ne sont pas par défaut dans allauth
     first_name = forms.CharField(max_length=30, label='Prénom')
     last_name = forms.CharField(max_length=30, label='Nom')
     role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, label='Rôle')
+    phone_number = forms.CharField(max_length=20, label='Numéro de téléphone', required=False)
 
     # Redéfinition de la méthode save pour enregistrer nos champs personnalisés
     def save(self, request):
@@ -17,6 +18,7 @@ class CustomSignupForm(SignupForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.role = self.cleaned_data['role']
+        user.phone_number = self.cleaned_data['phone_number']
         # Enregistrement en base de données
         user.save()
         return user
@@ -26,11 +28,12 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         # Champs qui pourront être modifiés dans le profil
-        fields = ['first_name', 'last_name', 'email', 'avatar']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'avatar']
         # Définition des widgets pour appliquer des classes CSS Bootstrap ('form-control')
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+221 77 000 00 00'}),
             'avatar': forms.FileInput(attrs={'class': 'form-control'}),
         }

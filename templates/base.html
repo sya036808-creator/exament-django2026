@@ -5,163 +5,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ESMT Task Manager{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        :root {
-            --sidebar-width: 280px;
-        }
-
-        .wrapper {
-            display: flex;
-            width: 100%;
-            align-items: stretch;
-        }
-
-        #sidebar {
-            min-width: var(--sidebar-width);
-            max-width: var(--sidebar-width);
-            transition: all 0.3s;
-            min-height: 100vh;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #sidebar.active {
-            margin-left: calc(-1 * var(--sidebar-width));
-        }
-
-        #content {
-            width: 100%;
-            padding: 2rem;
-            transition: all 0.3s;
-            overflow-x: hidden;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 0.8rem 1.5rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-        }
-
-        .avatar-circle {
-            border: 2px solid #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-    </style>
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
     <div class="wrapper">
-        <nav id="sidebar" class="shadow-sm">
-            <div class="sidebar-header p-4 text-center">
-                <div class="bg-primary bg-opacity-10 p-3 rounded-4 d-inline-block mb-2">
-                    <i class="fas fa-graduation-cap text-primary fa-2x"></i>
+        <nav id="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
-                <h4 class="fw-bold text-primary mb-0">ESMT Task</h4>
-                <p class="text-muted small">Collaborative Hub</p>
+                <div class="sidebar-brand-text">
+                    <h5>ESMT Task</h5>
+                    <small>Manager</small>
+                </div>
             </div>
 
-            <ul class="list-unstyled components mt-3">
+            <ul class="sidebar-nav">
                 <li class="{% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
-                    <a href="{% url 'dashboard' %}"><i class="fas fa-th-large me-2"></i> Tableau de bord</a>
+                    <a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> Dashboard</a>
                 </li>
                 <li class="{% if 'project' in request.path %}active{% endif %}">
-                    <a href="{% url 'project_list' %}"><i class="fas fa-layer-group me-2"></i> Mes Projets</a>
+                    <a href="{% url 'project_list' %}"><i class="fas fa-layer-group"></i> Mes Projets</a>
                 </li>
                 <li class="{% if 'statistics' in request.path %}active{% endif %}">
-                    <a href="{% url 'statistics' %}"><i class="fas fa-chart-line me-2"></i> Statistiques</a>
+                    <a href="{% url 'statistics' %}"><i class="fas fa-chart-bar"></i> Statistiques</a>
+                </li>
+                <li>
+                    <a href="{% url 'statistics' %}"><i class="fas fa-award"></i> Primes & Éval.</a>
+                </li>
+                <li>
+                    <a href="{% url 'profile_update' %}"><i class="fas fa-cog"></i> Paramètres</a>
                 </li>
             </ul>
 
-            <div class="mt-auto p-4">
-                {% if user.is_authenticated %}
-                <div class="card bg-light border-0 p-3 mb-3">
-                    <div class="d-flex align-items-center">
-                        <div class="avatar-circle me-3"
-                            style="width: 45px; height: 45px; background: #fff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" alt=""
-                                style="width: 100%; height: 100%; object-fit: cover;">
-                            {% else %}
-                            <i class="fas fa-user text-primary"></i>
-                            {% endif %}
-                        </div>
-                        <div class="overflow-hidden">
-                            <a href="{% url 'profile_update' %}" class="text-decoration-none text-dark">
-                                <div class="fw-bold text-truncate">{{ user.username }}</div>
-                                <div class="text-muted" style="font-size: 0.7rem;">{{ user.get_role_display }}</div>
-                            </a>
-                        </div>
-                    </div>
+            <div class="sidebar-user">
+                <div class="sidebar-avatar">
+                    {% if user.is_authenticated and user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Avatar">
+                    {% else %}
+                    <i class="fas fa-user" style="color: var(--gold-400); font-size: 0.8rem;"></i>
+                    {% endif %}
                 </div>
-                <form action="{% url 'account_logout' %}" method="post">
+                {% if user.is_authenticated %}
+                <div class="sidebar-user-info">
+                    <span class="name">{{ user.username }}</span>
+                    <span class="role">{{ user.get_role_display }}</span>
+                </div>
+                <form action="{% url 'account_logout' %}" method="post" class="ms-1">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-3">
-                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                    <button type="submit" class="btn-icon" title="Déconnexion">
+                        <i class="fas fa-sign-out-alt" style="font-size: 0.8rem;"></i>
                     </button>
                 </form>
                 {% else %}
-                <a href="{% url 'account_login' %}" class="btn btn-primary btn-sm w-100 mb-2 rounded-3">Connexion</a>
-                <a href="{% url 'account_signup' %}"
-                    class="btn btn-outline-primary btn-sm w-100 rounded-3">Inscription</a>
+                <div class="sidebar-user-info">
+                    <a href="{% url 'account_login' %}" class="btn btn-primary btn-sm w-100"
+                        style="font-size:0.72rem;">Se connecter</a>
+                </div>
                 {% endif %}
             </div>
         </nav>
 
         <div id="content">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-light rounded-3 shadow-sm">
+            <div class="top-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button id="sidebarCollapse" class="btn-icon" type="button">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="ms-auto d-flex align-items-center">
-                        <div class="dropdown me-3">
-                            <button class="btn btn-light rounded-3 p-2 shadow-sm" type="button"
-                                data-bs-toggle="dropdown">
-                                <i class="fas fa-bell text-muted"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-2 mt-2"
-                                style="border-radius: 12px;">
-                                <li>
-                                    <div class="dropdown-item text-center text-muted small py-3">Aucune notification
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="bg-white px-3 py-2 rounded-3 shadow-sm border small fw-medium text-muted">
-                            <i class="far fa-calendar-alt me-2 text-primary"></i>{% now "d M Y" %}
-                        </div>
+                    <span class="page-title">{% block page_title %}Dashboard{% endblock %}</span>
+                </div>
+                <div class="top-navbar-right">
+                    <div class="date-badge">
+                        <i class="far fa-calendar-alt me-1" style="color: var(--gold-400);"></i>{% now "d M Y" %}
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn-icon" data-bs-toggle="dropdown"><i class="fas fa-bell"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><span class="dropdown-item text-center"
+                                    style="font-size:0.75rem; color: var(--text-muted);">Aucune notification</span></li>
+                        </ul>
                     </div>
                 </div>
-            </nav>
-
-            {% if messages %}
-            <div class="animate-fade-in">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm rounded-4 mb-4"
-                    role="alert">
-                    <div class="d-flex align-items-center">
-                        <i
-                            class="fas {% if 'success' in message.tags %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} me-3 fs-5"></i>
-                        <div>{{ message }}</div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endfor %}
             </div>
-            {% endif %}
 
-            <div class="animate-fade-in">
-                {% block content %}{% endblock %}
+            <div class="page-content">
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i
+                            class="fas {% if 'success' in message.tags %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} me-2"></i>{{
+                        message }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="animate-fade-in">
+                    {% block content %}{% endblock %}
+                </div>
             </div>
         </div>
     </div>
@@ -170,6 +120,7 @@
     <script>
         document.getElementById('sidebarCollapse').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('content').classList.toggle('sidebar-collapsed');
         });
     </script>
     {% block extra_js %}{% endblock %}

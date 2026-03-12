@@ -1,160 +1,158 @@
 {% extends 'base.html' %}
 
-{% block title %}Statistiques & Évaluation - ESMT Task{% endblock %}
+{% block title %}Statistiques & Primes - ESMT Task Manager{% endblock %}
+{% block page_title %}Statistiques & Évaluation{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-2">
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h2 class="fw-bold mb-1">Statistiques & Évaluation</h2>
-            <p class="text-muted mb-0">Analyse de performance et calcul des primes ESMT.</p>
-        </div>
-        <div class="d-flex gap-2">
-            <span class="badge bg-white text-primary border shadow-sm px-4 py-2 rounded-pill">Trimestre {{
-                current_quarter }}</span>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-6">
-            <div class="card border-0 h-100 p-4 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <h5 class="fw-bold text-muted small text-uppercase tracking-wider mt-1">Performance
-                            Trimestrielle</h5>
-                    </div>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="flex-grow-1">
-                            <div class="progress" style="height: 12px;">
-                                <div class="progress-bar bg-accent shadow-sm" role="progressbar"
-                                    style="width: {{ quarter_rate }}%" aria-valuenow="{{ quarter_rate }}"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-muted small mt-3">
-                        <i class="fas fa-check-circle text-accent me-2"></i><strong>{{ completed_in_time_quarter
-                            }}</strong> tâches terminées dans les délais sur {{ total_quarter }} assignées.
-                    </p>
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card" style="border-radius: 14px; height: 100%;">
+            <div class="card-body p-4">
+                <div class="section-title mb-3">Performance Trimestrielle (T{{ current_quarter }})</div>
+                <div class="d-flex justify-content-between align-items-end mb-3">
+                    <div class="bonus-big">{{ quarter_rate }}%</div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ completed_in_time_quarter }} / {{
+                        total_quarter }} tâches</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card border-0 h-100 p-4 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <h5 class="fw-bold text-muted small text-uppercase tracking-wider mt-1">Performance Annuelle
-                        </h5>
-                    </div>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="flex-grow-1">
-                            <div class="progress" style="height: 12px;">
-                                <div class="progress-bar bg-primary shadow-sm" role="progressbar"
-                                    style="width: {{ annual_rate }}%" aria-valuenow="{{ annual_rate }}"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                        <div class="ms-4 h4 fw-bold text-primary mb-0">{{ annual_rate }}%</div>
-                    </div>
-                    <p class="text-muted small mt-3">
-                        <i class="fas fa-calendar-check text-primary me-2"></i><strong>{{ completed_in_time_annual
-                            }}</strong> tâches terminées dans les délais sur {{ total_annual }} assignées.
-                    </p>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar" style="width: {{ quarter_rate }}%"></div>
                 </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;"><i
+                        class="fas fa-info-circle me-1" style="color: var(--gold-400);"></i>Tâches terminées dans les
+                    délais ce trimestre.</p>
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="card" style="border-radius: 14px; height: 100%;">
+            <div class="card-body p-4">
+                <div class="section-title mb-3">Performance Annuelle</div>
+                <div class="d-flex justify-content-between align-items-end mb-3">
+                    <div class="bonus-big">{{ annual_rate }}%</div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ completed_in_time_annual }} / {{
+                        total_annual }} tâches</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar"
+                        style="width: {{ annual_rate }}%; background: linear-gradient(135deg, #4da3ff, #0080ff);"></div>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;"><i
+                        class="fas fa-calendar-check me-1" style="color: #4da3ff;"></i>Tâches terminées dans les délais
+                    cette année.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg overflow-hidden"
-                style="background: linear-gradient(to right, #ffffff, #f8fafc);">
-                <div class="card-body p-0">
-                    <div class="row g-0">
-                        <div class="col-lg-8 p-5">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-success bg-opacity-10 text-success p-3 rounded-4 me-3">
-                                    <i class="fas fa-award fa-2x"></i>
-                                </div>
-                                <h3 class="fw-bold mb-0">Évaluation des Primes Enseignants</h3>
-                            </div>
+<div class="card" style="border-radius: 14px; overflow: hidden;">
+    <div class="card-body p-0">
+        <div class="row g-0">
+            <div class="col-lg-8 p-4 p-lg-5">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div
+                        style="width: 44px; height: 44px; background: rgba(39,174,96,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-award" style="color: #27ae60;"></i>
+                    </div>
+                    <h4 style="font-weight: 700; margin: 0;">Évaluation des Primes Enseignants</h4>
+                </div>
 
-                            <div
-                                class="p-4 rounded-4 {% if prime > 0 %}bg-success bg-opacity-10 border border-success border-opacity-20{% else %}bg-light border{% endif %} mb-4">
-                                <h5 class="fw-bold mb-3 {% if prime > 0 %}text-success{% endif %}">
-                                    <i
-                                        class="fas {% if prime > 0 %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %} me-2"></i>
-                                    {{ prime_status }}
-                                </h5>
-                                <p class="text-muted mb-0">
-                                    {% if 'PROFESSOR' in user.role %}
-                                    Votre éligibilité est basée sur un taux de réussite annuel de <strong>{{ annual_rate
-                                        }}%</strong> calculé selon la conformité aux échéances ESMT.
-                                    {% else %}
-                                    Le programme de primes à la performance est exclusivement réservé au personnel
-                                    enseignant de l'ESMT.
-                                    {% endif %}
-                                </p>
-                            </div>
+                <div
+                    style="padding: 20px; border-radius: 12px; {% if prime > 0 %}background: rgba(39,174,96,0.08); border: 1px solid rgba(39,174,96,0.2);{% else %}background: var(--navy-700); border: 1px solid var(--border-color);{% endif %} margin-bottom: 24px;">
+                    <h5
+                        style="font-weight: 700; {% if prime > 0 %}color: #27ae60;{% else %}color: var(--text-secondary);{% endif %} margin-bottom: 8px;">
+                        <i
+                            class="fas {% if prime > 0 %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %} me-2"></i>{{
+                        prime_status }}
+                    </h5>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+                        {% if 'PROFESSOR' in user.role %}
+                        Votre éligibilité est basée sur un taux de réussite annuel de <strong
+                            style="color: var(--gold-400);">{{ annual_rate }}%</strong> calculé selon la conformité aux
+                        échéances ESMT.
+                        {% else %}
+                        Le programme de primes est exclusivement réservé au personnel enseignant de l'ESMT.
+                        {% endif %}
+                    </p>
+                </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center text-muted small">
-                                        <i class="fas fa-info-circle me-2 text-primary"></i> Taux ≥ 90% = 30.000 CFA
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center text-muted small">
-                                        <i class="fas fa-star me-2 text-warning"></i> Taux = 100% = 100.000 CFA
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
                         <div
-                            class="col-lg-4 d-flex align-items-center justify-content-center p-5 bg-primary bg-opacity-5 text-center">
-                            <div>
-                                <div
-                                    class="display-3 fw-bold {% if prime > 0 %}text-success{% else %}text-muted{% endif %} mb-0">
-                                    {{ prime|stringformat:"d" }}
-                                </div>
-                                <div class="h5 fw-bold text-muted text-uppercase tracking-widest mt-1">CFA</div>
-                                <div class="text-muted small mt-4">Montant de la prime<br>estimé pour l'année</div>
-                                {% if prime > 0 %}
-                                <div class="mt-4">
-                                    <span
-                                        class="badge bg-success bg-opacity-10 text-success px-4 py-2 rounded-pill border border-success border-opacity-25">Félicitations
-                                        !</span>
-                                </div>
-                                {% endif %}
-                            </div>
+                            style="background: var(--navy-700); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px;">
+                            <span class="pct-badge pct-gold" style="float: right;">90%</span>
+                            <div
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;">
+                                Prime Standard</div>
+                            <div class="bonus-big" style="font-size: 1.3rem;">30.000</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted);">CFA — Taux ≥ 90%</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div
+                            style="background: var(--navy-700); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px;">
+                            <span class="pct-badge pct-green" style="float: right;">100%</span>
+                            <div
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;">
+                                Prime Excellence</div>
+                            <div class="bonus-big" style="font-size: 1.3rem;">100.000</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted);">CFA — Taux = 100%</div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-4 d-flex align-items-center justify-content-center p-5 text-center"
+                style="background: var(--navy-700); border-left: 1px solid var(--border-color);">
+                <div>
+                    <div
+                        style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px;">
+                        Prime estimée</div>
+                    <div
+                        style="font-size: 3rem; font-weight: 800; {% if prime > 0 %}color: #27ae60;{% else %}color: var(--text-muted);{% endif %}">
+                        {{ prime|stringformat:"d" }}</div>
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted);">CFA</div>
+                    {% if prime > 0 %}
+                    <div style="margin-top: 16px;">
+                        <span
+                            style="background: rgba(39,174,96,0.12); color: #27ae60; border: 1px solid rgba(39,174,96,0.25); border-radius: 20px; padding: 6px 18px; font-size: 0.75rem; font-weight: 700;">Félicitations
+                            !</span>
+                    </div>
+                    {% endif %}
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 16px; line-height: 1.5;">
+                        Montant calculé<br>sur l'année en cours</div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="row mt-5">
-        <div class="col-md-4">
-            <div class="p-4 rounded-4 bg-white shadow-sm border-start border-4 border-accent h-100">
-                <h6 class="fw-bold text-accent"><i class="fas fa-microscope me-2"></i>Algorithme</h6>
-                <p class="small text-muted mb-0">Les tâches sont validées si le statut est <strong>"Terminé"</strong> et
-                    que la date de dernière modification est antérieure à la <strong>date limite</strong>.</p>
-            </div>
+<div class="row g-3 mt-4">
+    <div class="col-md-4">
+        <div
+            style="padding: 16px 18px; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 3px solid var(--gold-400);">
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold-400); margin-bottom: 6px;"><i
+                    class="fas fa-microscope me-2"></i>Algorithme</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Tâches validées si statut <strong
+                    style="color: var(--text-secondary);">Terminé</strong> et date de modification antérieure à la
+                <strong style="color: var(--text-secondary);">date limite</strong>.</p>
         </div>
-        <div class="col-md-4">
-            <div class="p-4 rounded-4 bg-white shadow-sm border-start border-4 border-warning h-100">
-                <h6 class="fw-bold text-warning"><i class="fas fa-lightbulb me-2"></i>Optimisation</h6>
-                <p class="small text-muted mb-0">Maintenez vos tâches à jour quotidiennement. Les retards, même mineurs,
-                    impactent directement votre éligibilité à la prime.</p>
-            </div>
+    </div>
+    <div class="col-md-4">
+        <div
+            style="padding: 16px 18px; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 3px solid #f39c12;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #f39c12; margin-bottom: 6px;"><i
+                    class="fas fa-lightbulb me-2"></i>Optimisation</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Maintenez vos tâches à jour
+                quotidiennement. Les retards impactent directement votre éligibilité à la prime.</p>
         </div>
-        <div class="col-md-4">
-            <div class="p-4 rounded-4 bg-white shadow-sm border-start border-4 border-primary h-100">
-                <h6 class="fw-bold text-primary"><i class="fas fa-shield-alt me-2"></i>Transparence</h6>
-                <p class="small text-muted mb-0">Les cycles de calcul sont annuels. Les primes sont généralement versées
-                    lors des clôtures budgétaires trimestrielles.</p>
-            </div>
+    </div>
+    <div class="col-md-4">
+        <div
+            style="padding: 16px 18px; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-left: 3px solid #4da3ff;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #4da3ff; margin-bottom: 6px;"><i
+                    class="fas fa-shield-alt me-2"></i>Transparence</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Cycles de calcul annuels. Les primes
+                sont versées lors des clôtures budgétaires trimestrielles.</p>
         </div>
     </div>
 </div>

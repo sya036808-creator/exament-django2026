@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n static %}
 {% load account socialaccount %}
 
 {% block title %}{% trans "Connexion" %} - ESMT Task{% endblock %}
@@ -10,6 +10,8 @@
         <div class="card border-0 shadow-lg p-4">
             <div class="card-body">
                 <div class="text-center mb-4">
+                    <img src="{% static 'images/esmt_logo.png' %}" alt="Logo ESMT"
+                        style="max-width: 180px; margin-bottom: 18px; border-radius: 10px;">
                     <h3 class="fw-bold text-primary">Bon retour !</h3>
                     <p class="text-muted small">Connectez-vous pour gérer vos projets ESMT</p>
                 </div>

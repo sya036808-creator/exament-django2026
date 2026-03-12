@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n static %}
 {% load account socialaccount %}
 
 {% block title %}{% trans "Inscription" %} - ESMT Task{% endblock %}
@@ -10,6 +10,8 @@
         <div class="card border-0 shadow-lg p-4">
             <div class="card-body">
                 <div class="text-center mb-4">
+                    <img src="{% static 'images/esmt_logo.png' %}" alt="Logo ESMT"
+                        style="max-width: 180px; margin-bottom: 18px; border-radius: 10px;">
                     <h3 class="fw-bold text-primary">Créer un compte</h3>
                     <p class="text-muted small">Rejoignez l'espace collaboratif ESMT</p>
                 </div>
@@ -45,6 +47,15 @@
                             id="{{ form.email.id_for_label }}" required>
                         {% if form.email.errors %}
                         <div class="text-danger small">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label small fw-bold">Numéro de téléphone</label>
+                        <input type="text" name="phone_number" placeholder="+221 77 000 00 00" class="form-control"
+                            id="{{ form.phone_number.id_for_label }}">
+                        {% if form.phone_number.errors %}
+                        <div class="text-danger small">{{ form.phone_number.errors }}</div>
                         {% endif %}
                     </div>
 

@@ -11,6 +11,8 @@ class CustomUser(AbstractUser):
     
     # Champ de rôle pour déterminer si l'utilisateur est un étudiant ou un professeur
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='STUDENT')
+    # Champ de numéro de téléphone pour l'envoi de SMS
+    phone_number = models.CharField(max_length=20, null=True, blank=True, verbose_name="Numéro de téléphone")
     # Champ d'image de profil (avatar) facultatif pour l'utilisateur
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     

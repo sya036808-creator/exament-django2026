@@ -183,10 +183,18 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
+
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' for production
+
+# --- CONFIGURATION DES EMAILS ---
+# Étant donné que Gmail bloque la connexion (BadCredentials), on utilise l'affichage console.
+# Le lien de réinitialisation de mot de passe sera écrit dans le fichier messages_recus.txt et dans le terminal.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'ESMT Task Manager <sya036808@gmail.com>'
 
 # New allauth settings (replaces deprecated ones)
 ACCOUNT_LOGIN_METHODS = {'email'}
